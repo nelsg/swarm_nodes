@@ -6,8 +6,9 @@ set -eux
 #     dpkg-preconfigure: unable to re-open stdin: No such file or directory
 export DEBIAN_FRONTEND=noninteractive
 
-# update the package cache.
+# update && upgrade the package cache.
 apt-get update
+apt-get upgrade -y
 
 # install jq.
 apt-get install -y jq
@@ -30,14 +31,41 @@ sudo apt-get install -y --no-install-recommends xfce4 virtualbox-guest-dkms virt
 sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
 grep -q -F 'LANG=fr_FR.utf-8' /etc/environment || echo "LANG=fr_FR.utf-8" | sudo tee -a /etc/environment
 grep -q -F 'LC_ALL=fr_FR.utf-8' /etc/environment || echo "LC_ALL=fr_FR.utf-8" | sudo tee -a /etc/environment
-#sudo setxkbmap fr
-#sudo sed -i 's/XKBLAYOUT=\"\w*"/XKBLAYOUT=\"fr\"/g' /etc/default/keyboard
 
 # usefull dev tools
-sudo apt-get install -y git python mlocate net-tools dnsutils bridge-utils htop tree telnet bmon nethogs iptraf sysstat iotop tcpdump
+sudo apt-get install -y git curl wget python mlocate net-tools dnsutils bridge-utils htop tree telnet bmon nethogs iptraf sysstat iotop tcpdump nano
+
+# vagrant without password
+cat >/etc/sudoers.d/vagrant <<'EOF'
+%vagrant ALL=NOPASSWD:ALL
+EOF
+
+# oh-my-zsh
+sudo apt-get install -y zsh
+sudo chsh -s /bin/zsh vagrant
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+sudo rsync -r /root/.oh-my-zsh/ /home/vagrant/.oh-my-zsh
+sudo chown -R vagrant:vagrant /home/vagrant/.oh-my-zsh
+
+cat >/home/vagrant/.zshrc <<'EOF'
+export PATH=$HOME/bin:/usr/local/bin:$PATH
+export ZSH=$HOME/.oh-my-zsh
+ZSH_THEME="robbyrussell"
+DISABLE_AUTO_UPDATE="true"
+HIST_STAMPS="yyyy-mm-dd"
+plugins=(command-not-found common-aliases git docker docker-compose docker-machine fabric history history-substring-search jsontools pip python ssh-agent sudo yum)
+source $ZSH/oh-my-zsh.sh
+export LANG=fr_FR.UTF-8
+export ARCHFLAGS="-arch x86_64"
+export SSH_KEY_PATH="~/.ssh/rsa_id"
+EOF
+echo CCCC
+
+sudo chown vagrant:vagrant /home/vagrant/.zshrc
+echo DDDD
 
 # Permit anyone to start the GUI
-if [ ! -f /etc/X11/Xwrapper.config ]; then
+if [ -e /etc/X11/Xwrapper.config ]; then
   sudo sed -i 's/allowed_users=.*$/allowed_users=anybody/' /etc/X11/Xwrapper.config
 fi
 
@@ -68,12 +96,12 @@ EOF
 #    it could also be generated with figlet.org.
 cat >/etc/motd <<'EOF'
 
-      _            _
-     | |          | |
-   __| | ___   ___| | _____ _ __   _____      ____ _ _ __ _ __ ___
-  / _` |/ _ \ / __| |/ / _ \ '__| / __\ \ /\ / / _` | '__| '_ ` _ \
- | (_| | (_) | (__|   <  __/ |    \__ \\ V  V / (_| | |  | | | | | |
-  \__,_|\___/ \___|_|\_\___|_|    |___/ \_/\_/ \__,_|_|  |_| |_| |_|
+ ______                         _   _               _____             _
+|  ____|                       | | (_)             |  __ \           | |
+| |__ ___  _ __ _ __ ___   __ _| |_ _  ___  _ __   | |  | | ___   ___| | _____ _ __
+|  __/ _ \| '__| '_ ` _ \ / _` | __| |/ _ \| '_ \  | |  | |/ _ \ / __| |/ / _ \ '__|
+| | | (_) | |  | | | | | | (_| | |_| | (_) | | | | | |__| | (_) | (__|   <  __/ |
+|_|  \___/|_|  |_| |_| |_|\__,_|\__|_|\___/|_| |_| |_____/ \___/ \___|_|\_\___|_|
 
 
 EOF
