@@ -6,7 +6,7 @@ Vagrant.configure(2) do |config|
         puts "name=docker1, fqdn=docker1.example.com, ip=10.10.0.201"
         # Ubuntu 18.04
         docker1.vm.box = "peru/ubuntu-18.04-desktop-amd64"
-        docker1.vm.box_version = "20180907.01"
+        docker1.vm.box_version = "20190401.01"
         docker1.vm.box_check_update = false
         docker1.vm.hostname = "docker1"
         ## Private network
@@ -30,7 +30,7 @@ Vagrant.configure(2) do |config|
         puts "name=docker2, fqdn=docker2.example.com, ip=10.10.0.202"
         # Ubuntu 18.04
         docker2.vm.box = "ubuntu/bionic64"
-        docker2.vm.box_version = "20180913.0.0"
+        docker2.vm.box_version = "20190402.0.0"
         docker2.vm.box_check_update = false
         docker2.vm.hostname = "docker2"
         ## Private network
@@ -54,7 +54,7 @@ Vagrant.configure(2) do |config|
         puts "name=docker3, fqdn=docker3.example.com, ip=10.10.0.203"
         # Ubuntu 18.04
         docker3.vm.box = "ubuntu/bionic64"
-        docker3.vm.box_version = "20180913.0.0"
+        docker3.vm.box_version = "20190402.0.0"
         docker3.vm.box_check_update = false
         docker3.vm.hostname = "docker3"
         ## Private network
